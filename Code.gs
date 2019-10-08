@@ -15,6 +15,11 @@ function triggerOnEdit(e)
   var range = e.range;
   value = "";
   
+  // Don't send an email if I made the change
+  if(e.user.getEmail() === admin_email){
+    return;
+  }
+  
   try{
     if(SpreadsheetApp.getActiveSheet().getRange(1, range.getColumn()).getValue() === col_name){
       value = range.getValue();
@@ -42,9 +47,9 @@ function sendEmail()
   var changes = PropertiesService.getUserProperties().getProperty('changes')
   console.log(changes)
   if(changes !== null){
-    MailApp.sendEmail(admin_email,'CHECK THE PHOTO SPREADSHEET!',
-                    'A cell has changed in the photo spreadsheet, '+ SpreadsheetApp.getActiveSpreadsheet().getUrl() +'. ' + 
-      'The following changes have been made:\n' + changes);
+    MailApp.sendEmail(admin_email,'CHECK THE PHOTO SPREADSHEET!', 
+                      'The following changes have been made to the photo spreadsheet:\n' + changes + 
+                      '\nThe photo spreadsheet is located here: '+ SpreadsheetApp.getActiveSpreadsheet().getUrl() +'. ');
     PropertiesService.getUserProperties().deleteProperty('changes')
   }
 }
